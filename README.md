@@ -1,7 +1,7 @@
 # AndroidNetConnection
 an customization for request with help of okhttp3
 
-To get a Git project into your build:
+To get a this project into your build:
 
 Step 1. Add the JitPack repository to your build file
 
