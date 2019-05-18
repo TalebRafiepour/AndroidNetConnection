@@ -21,4 +21,15 @@ Step 2. Add the dependency
 	dependencies {
 	        implementation 'com.github.TalebRafiepour:AndroidNetConnection:0.0.2'
 	}
+```
+Step 3. Add Capatibility with java 8
+```
+android {
+...
+  compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+...
+}
  
