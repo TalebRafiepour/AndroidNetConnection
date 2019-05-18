@@ -55,11 +55,7 @@ class NetworkConnection(private val delegate: INetworkConnection? = null, privat
                 val mainHandler = Handler(context.mainLooper)
                 mainHandler.post {
                     kotlin.run {
-                        if (response != null) {
-                            handleResponse(response, requestCode)
-                        } else {
-                            delegate?.onFailure(requestCode, context.getString(R.string.server_connection_error))
-                        }
+                        handleResponse(response, requestCode)
                     }
                 }
             }
