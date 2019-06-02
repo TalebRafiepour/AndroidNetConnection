@@ -26,7 +26,7 @@ class NetworkConnection(private val delegate: INetworkConnection? = null, privat
     fun post(parameters: HashMap<String, String>, url: String, requestCode: Int) {
         //todo (add post type (json or multipart) in the future if needed)
         if (!verifyAvailableNetwork(context)) {
-            delegate?.onFailure(requestCode, context.getString(R.string.verify_you_network_connectivity))
+            delegate?.onFailure(requestCode, com.taleb.netconnection.Error(NETWORK_NOT_REACHABLE_ERROR_CODE,context.getString(R.string.verify_you_network_connectivity)))
             return
         }
         val requestBody = MultipartBody.Builder()
@@ -46,7 +46,7 @@ class NetworkConnection(private val delegate: INetworkConnection? = null, privat
                 mainHandler.post {
                     kotlin.run {
                         e.printStackTrace()
-                        delegate?.onFailure(requestCode, context.getString(R.string.server_connection_error))
+                        delegate?.onFailure(requestCode, com.taleb.netconnection.Error(API_CALL_FAIL_ERROR_CODE,context.getString(R.string.server_connection_error)))
                     }
                 }
             }
@@ -83,24 +83,30 @@ class NetworkConnection(private val delegate: INetworkConnection? = null, privat
                 }
                 401 -> {
                     //todo (handle 401 response message to show for user)
-                    delegate?.onFailure(requestCode, response.message())
+                    delegate?.onFailure(requestCode, com.taleb.netconnection.Error(401,response.message()))
                 }
                 403 -> {
                     //todo (handle 401 response message to show for user)
-                    delegate?.onFailure(requestCode, response.message())
+                    delegate?.onFailure(requestCode, com.taleb.netconnection.Error(403,response.message()))
                 }
                 404 -> {
-                    delegate?.onFailure(requestCode, context.getString(R.string.server_connection_error))
+                    delegate?.onFailure(requestCode, com.taleb.netconnection.Error(404,context.getString(R.string.server_connection_error)))
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            delegate?.onFailure(requestCode, context.getString(R.string.exception_in_gathering_info))
+            delegate?.onFailure(requestCode, com.taleb.netconnection.Error(NONE_DEFINED_EXCEPTION_ERROR_CODE,context.getString(R.string.exception_in_gathering_info)))
         }
     }
 
     interface INetworkConnection {
         fun onSuccess(requestCode: Int, json: JSONObject)
-        fun onFailure(requestCode: Int, message: String)
+        fun onFailure(requestCode: Int, error: Error)
+    }
+
+    companion object{
+        const val NETWORK_NOT_REACHABLE_ERROR_CODE = -2
+        const val NONE_DEFINED_EXCEPTION_ERROR_CODE = -1
+        const val API_CALL_FAIL_ERROR_CODE = -3
     }
 }
