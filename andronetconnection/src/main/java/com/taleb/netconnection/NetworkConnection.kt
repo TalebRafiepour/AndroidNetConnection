@@ -159,6 +159,52 @@ class NetworkConnection(private val delegate: INetworkConnection? = null, privat
 
     }
 
+
+    /*
+    * get with json object key value param for header
+    * */
+    fun get(headerParam: JSONObject? = null, url: String, requestCode: Int) {
+        if (!verifyAvailableNetwork(context)) {
+            delegate?.onFailure(requestCode, Error(NETWORK_NOT_REACHABLE_ERROR_CODE,context.getString(R.string.verify_you_network_connectivity)))
+            return
+        }
+
+        val requestBuilder = Request.Builder()
+
+        if (headerParam != null){
+            val paramKeys = headerParam.keys()
+            for (key in paramKeys) {
+                requestBuilder.addHeader(key, headerParam.get(key).toString())
+            }
+        }
+        val request = requestBuilder
+            .url(url)
+            .get()
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+
+            override fun onFailure(call: Call, e: IOException) {
+                //todo handle error
+                val mainHandler = Handler(context.mainLooper)
+                mainHandler.post {
+                    run {
+                        e.printStackTrace()
+                        delegate?.onFailure(requestCode, Error(API_CALL_FAIL_ERROR_CODE,context.getString(R.string.server_connection_error)))
+                    }
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val mainHandler = Handler(context.mainLooper)
+                mainHandler.post {
+                    run {
+                        handleResponse(response, requestCode)
+                    }
+                }
+            }
+        })
+    }
+
     private fun verifyAvailableNetwork(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
