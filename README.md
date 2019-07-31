@@ -19,7 +19,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 ```
 	dependencies {
-	        implementation 'com.github.TalebRafiepour:AndroidNetConnection:0.0.7'
+	        implementation 'com.github.TalebRafiepour:AndroidNetConnection:0.0.8'
 	}
 ```
 Step 3. Add Capatibility with java 8
