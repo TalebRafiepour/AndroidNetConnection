@@ -10,7 +10,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 
-public class NetworkConnection(private val delegate: INetworkConnection? = null, private val context: Context) {
+class NetworkConnection(private val delegate: INetworkConnection? = null, private val context: Context) {
 
     private var okHttpBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
     private var client: OkHttpClient
@@ -28,7 +28,10 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
     * */
     fun post(parameters: HashMap<String, String>, url: String, requestCode: Int) {
         if (!verifyAvailableNetwork(context)) {
-            delegate?.onFailure(requestCode, Error(NETWORK_NOT_REACHABLE_ERROR_CODE,context.getString(R.string.verify_you_network_connectivity)))
+            delegate?.onFailure(
+                requestCode,
+                Error(NETWORK_NOT_REACHABLE_ERROR_CODE, context.getString(R.string.verify_you_network_connectivity))
+            )
             return
         }
         val requestBody = MultipartBody.Builder()
@@ -48,7 +51,10 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
                 mainHandler.post {
                     run {
                         e.printStackTrace()
-                        delegate?.onFailure(requestCode, Error(API_CALL_FAIL_ERROR_CODE,context.getString(R.string.server_connection_error)))
+                        delegate?.onFailure(
+                            requestCode,
+                            Error(API_CALL_FAIL_ERROR_CODE, context.getString(R.string.server_connection_error))
+                        )
                     }
                 }
             }
@@ -70,7 +76,10 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
     * */
     fun post(parameters: JSONObject, url: String, requestCode: Int) {
         if (!verifyAvailableNetwork(context)) {
-            delegate?.onFailure(requestCode, Error(NETWORK_NOT_REACHABLE_ERROR_CODE,context.getString(R.string.verify_you_network_connectivity)))
+            delegate?.onFailure(
+                requestCode,
+                Error(NETWORK_NOT_REACHABLE_ERROR_CODE, context.getString(R.string.verify_you_network_connectivity))
+            )
             return
         }
         val requestBody = MultipartBody.Builder()
@@ -91,7 +100,10 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
                 mainHandler.post {
                     run {
                         e.printStackTrace()
-                        delegate?.onFailure(requestCode, Error(API_CALL_FAIL_ERROR_CODE,context.getString(R.string.server_connection_error)))
+                        delegate?.onFailure(
+                            requestCode,
+                            Error(API_CALL_FAIL_ERROR_CODE, context.getString(R.string.server_connection_error))
+                        )
                     }
                 }
             }
@@ -108,14 +120,16 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
     }
 
 
-
     /*
     * post none multipart
     * */
-    fun post(url: String, requestCode: Int = 0,bodyJsonString: String,headers : HashMap<String,String>? = null) {
+    fun post(url: String, requestCode: Int = 0, bodyJsonString: String, headers: HashMap<String, String>? = null) {
 
         if (!verifyAvailableNetwork(context)) {
-            delegate?.onFailure(requestCode, Error(NETWORK_NOT_REACHABLE_ERROR_CODE,context.getString(R.string.verify_you_network_connectivity)))
+            delegate?.onFailure(
+                requestCode,
+                Error(NETWORK_NOT_REACHABLE_ERROR_CODE, context.getString(R.string.verify_you_network_connectivity))
+            )
             return
         }
 
@@ -125,9 +139,9 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
         val requestBuilder = Request.Builder()
             .addHeader("Content-Type", "application/json")
 
-        if (headers != null){
-            for ((key,value) in headers){
-                requestBuilder.addHeader(key,value)
+        if (headers != null) {
+            for ((key, value) in headers) {
+                requestBuilder.addHeader(key, value)
             }
         }
 
@@ -142,7 +156,10 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
                 mainHandler.post {
                     run {
                         e.printStackTrace()
-                        delegate?.onFailure(requestCode, Error(API_CALL_FAIL_ERROR_CODE,context.getString(R.string.server_connection_error)))
+                        delegate?.onFailure(
+                            requestCode,
+                            Error(API_CALL_FAIL_ERROR_CODE, context.getString(R.string.server_connection_error))
+                        )
                     }
                 }
             }
@@ -159,19 +176,21 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
 
     }
 
-
     /*
-    * get with json object key value param for header
-    * */
+     * get with json object key value param for header
+     * */
     fun get(headerParam: JSONObject? = null, url: String, requestCode: Int) {
         if (!verifyAvailableNetwork(context)) {
-            delegate?.onFailure(requestCode, Error(NETWORK_NOT_REACHABLE_ERROR_CODE,context.getString(R.string.verify_you_network_connectivity)))
+            delegate?.onFailure(
+                requestCode,
+                Error(NETWORK_NOT_REACHABLE_ERROR_CODE, context.getString(R.string.verify_you_network_connectivity))
+            )
             return
         }
 
         val requestBuilder = Request.Builder()
 
-        if (headerParam != null){
+        if (headerParam != null) {
             val paramKeys = headerParam.keys()
             for (key in paramKeys) {
                 requestBuilder.addHeader(key, headerParam.get(key).toString())
@@ -189,7 +208,10 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
                 mainHandler.post {
                     run {
                         e.printStackTrace()
-                        delegate?.onFailure(requestCode, Error(API_CALL_FAIL_ERROR_CODE,context.getString(R.string.server_connection_error)))
+                        delegate?.onFailure(
+                            requestCode,
+                            Error(API_CALL_FAIL_ERROR_CODE, context.getString(R.string.server_connection_error))
+                        )
                     }
                 }
             }
@@ -204,6 +226,7 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
             }
         })
     }
+
 
     private fun verifyAvailableNetwork(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -225,28 +248,31 @@ public class NetworkConnection(private val delegate: INetworkConnection? = null,
                 }
                 401 -> {
                     //todo (handle 401 response message to show for user)
-                    delegate?.onFailure(requestCode, Error(401,response.message()))
+                    delegate?.onFailure(requestCode, Error(401, response.message()))
                 }
                 403 -> {
                     //todo (handle 401 response message to show for user)
-                    delegate?.onFailure(requestCode, Error(403,response.message()))
+                    delegate?.onFailure(requestCode, Error(403, response.message()))
                 }
                 404 -> {
-                    delegate?.onFailure(requestCode, Error(404,context.getString(R.string.server_connection_error)))
+                    delegate?.onFailure(requestCode, Error(404, context.getString(R.string.server_connection_error)))
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            delegate?.onFailure(requestCode, Error(NONE_DEFINED_EXCEPTION_ERROR_CODE,context.getString(R.string.exception_in_gathering_info)))
+            delegate?.onFailure(
+                requestCode,
+                Error(NONE_DEFINED_EXCEPTION_ERROR_CODE, context.getString(R.string.exception_in_gathering_info))
+            )
         }
     }
 
-    public interface INetworkConnection {
+    interface INetworkConnection {
         fun onSuccess(requestCode: Int, json: JSONObject)
         fun onFailure(requestCode: Int, error: Error)
     }
 
-    companion object{
+    companion object {
         const val NETWORK_NOT_REACHABLE_ERROR_CODE = -2
         const val NONE_DEFINED_EXCEPTION_ERROR_CODE = -1
         const val API_CALL_FAIL_ERROR_CODE = -3
