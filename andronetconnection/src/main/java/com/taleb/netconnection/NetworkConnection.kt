@@ -10,7 +10,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 
-class NetworkConnection(private val delegate: INetworkConnection? = null, private val context: Context) {
+public class NetworkConnection(private val delegate: INetworkConnection? = null, private val context: Context) {
 
     private var okHttpBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
     private var client: OkHttpClient
@@ -241,7 +241,7 @@ class NetworkConnection(private val delegate: INetworkConnection? = null, privat
         }
     }
 
-    interface INetworkConnection {
+    public interface INetworkConnection {
         fun onSuccess(requestCode: Int, json: JSONObject)
         fun onFailure(requestCode: Int, error: Error)
     }
